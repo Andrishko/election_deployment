@@ -100,3 +100,4 @@ class CandidatesAdmin(admin.ModelAdmin):
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Votings, VotingsAdmin)
 admin.site.register(Candidates, CandidatesAdmin)
+admin.site.register(Faculty)
