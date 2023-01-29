@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Information</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto:wght@500&display=swap"
+    rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/stylevote.css' %}">
+  <link rel="stylesheet" href="{% static 'css/adaptive.css' %}">
+</head>
+
+<body>
+  <header class="header">
+    <div class="wrapper">
+      <div class="header__inner">
+        <img class="logo" src="{%static 'images/logo.svg'%}" alt="">
+        <h1 class="title">{{vote.name}}</h1>
+        <img class="logo" src="{{vote.parlament_image.url }}" alt="">
+      </div>
+    </div>
+  </header>
+
+  {%load static%}
+  <section class="main" id="output" style="position: relative;">
+
+    <p style="margin: 25vh auto;
+    text-transform: uppercase;
+    text-align: center;
+    ">голосування не активне</p>
+    <img class="pepe" src="{% static 'images/pepe.png' %}" alt="">
+  </section>
+
+</body>
+
+</html>

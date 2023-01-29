@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Information</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto:wght@500&display=swap"
+    rel="stylesheet">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/stylevote.css' %}">
+  <link rel="stylesheet" href="{% static 'css/adaptive.css' %}">
+  <link rel="stylesheet" href="{% static 'css/stylesolovote.css' %}">
+</head>
+
+<body>
+  <header class="header">
+    <div class="wrapper">
+      <div class="header__inner">
+        {%load static%}
+        <img class="logo" src="{%static 'images/logo.svg'%}" alt="">
+        <h1 class="title">{{vote.name}}</h1>
+        <img class="logo" src="{{ vote.parlament_image.url }}" alt="">
+      </div>
+    </div>
+  </header>
+  <section class="main" id="output">
+    <div class="wrapper">
+      <div class="inner">
+        <div class="votesolo">
+          {% for cand in candidates %}
+          <img src="{{cand.image.url}}" alt="">
+          <p class="candidate__name candidate__name-solo">
+            {{cand.candidate_name}}
+          </p>
+          {% endfor %}
+          <div class="vote">
+            <div class="vote-item">
+              <div class="radio">
+                <input class="radio-button" type="radio" name="candidate" id="yes" value="yes"
+                  onclick="radioClick(this)">
+                <span class="checkmark"></span>
+              </div>
+              <label for="yes">
+                ЗА
+              </label>
+
+            </div>
+            <div class="vote-item">
+              <div class="radio">
+                <input class="radio-button" type="radio" name="candidate" id="no" value="no" onclick="radioClick(this)">
+                <span class="checkmark"></span>
+              </div> 
+              <label for="no">
+                ПРОТИ
+              </label>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="vote__button" type="button" onclick="displayRadioValue()">
+      Проголосувати
+    </button>
+  </section>/
+
+  <script rel="javascript" type="text/javascript" href="js/jquery-1.11.3.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  {% load static %}
+  <script src="{% static 'js/voteSolo.js' %}" defer data-token="{{token}}"
+    data-candidate="{% for cand in candidates %}{{cand.id}}{% endfor %}" data-abstain="{{abstain}}">
+    </script>
+
+</body>
+
+</html>
