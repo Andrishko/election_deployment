@@ -10,7 +10,7 @@ function displayRadioValue() {
         
         $.ajax({
           type: "PUT",
-          url: 'http://127.0.0.1:8000/votesolo/',
+          url: 'https://obscure-bastion-38165.herokuapp.com/votesolo/',
           data: {
           
             "candidate": data.candidate,
@@ -32,7 +32,7 @@ function displayRadioValue() {
   }
   $.ajax({
     type: "PUT",
-    url: 'http://127.0.0.1:8000/votetest/',
+    url: 'https://obscure-bastion-38165.herokuapp.com/votetest/',
     data: {
       "candidate": data.abstain,
       "token": data.token
