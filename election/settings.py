@@ -12,7 +12,10 @@ SECRET_KEY = 'django-insecure-==cm$bs03_s5dx23y&z-ng+=#!8$oqah2^!wg8z)14nq_saxo7
 # DEBUG = True
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+  'https://obscure-bastion-38165.herokuapp.com',
+   '127.0.0.1'
+]
 
 # Application definition
 
