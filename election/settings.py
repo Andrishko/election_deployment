@@ -16,7 +16,6 @@ DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 ALLOWED_HOSTS = [
     'obscure-bastion-38165.herokuapp.com',
     '127.0.0.1',
-    'frontend-for-test-election.vercel.app'
 ]
 
 # Application definition
@@ -166,7 +165,8 @@ SIMPLE_JWT = {
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:8000",
     "http://localhost:3000",
-    "http://192.168.56.1:3000"
+    "http://192.168.56.1:3000",
+    "https://frontend-for-test-election.vercel.app"
 ]
 
 # Heroku: Update database configuration from $DATABASE_URL.
