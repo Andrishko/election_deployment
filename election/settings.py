@@ -17,7 +17,6 @@ ALLOWED_HOSTS = [
     'obscure-bastion-38165.herokuapp.com',
     '127.0.0.1',
     'frontend-for-test-election.vercel.app'
-
 ]
 
 # Application definition
