@@ -1,3 +1,4 @@
+import dj_database_url
 from datetime import timedelta
 from pathlib import Path
 import os
@@ -13,8 +14,10 @@ SECRET_KEY = 'django-insecure-==cm$bs03_s5dx23y&z-ng+=#!8$oqah2^!wg8z)14nq_saxo7
 DEBUG = bool(os.environ.get('DJANGO_DEBUG', True))
 
 ALLOWED_HOSTS = [
-  'obscure-bastion-38165.herokuapp.com',
-   '127.0.0.1'
+    'obscure-bastion-38165.herokuapp.com',
+    '127.0.0.1',
+    'frontend-for-test-election.vercel.app'
+
 ]
 
 # Application definition
@@ -168,7 +171,6 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 # Heroku: Update database configuration from $DATABASE_URL.
-import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
 
