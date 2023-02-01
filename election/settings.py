@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
+    "django_extensions",
+    "storages",
     "myapi",
 ]
 
@@ -115,7 +117,7 @@ USE_TZ = True
 
 # The absolute path to the directory where collectstatic will collect static files for deployment.
 
-USE_S3 =  "TRUE"
+USE_S3 = "TRUE"
 
 if USE_S3:
     # aws settings
@@ -134,9 +136,9 @@ else:
     MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 
 
-STATIC_URL = '/staticfiles/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+STATIC_URL = "/staticfiles/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
