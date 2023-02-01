@@ -15,7 +15,8 @@ class Faculty(models.Model):
 class Candidates(models.Model):
     candidate_name = models.CharField(max_length=255)
     faculty = models.ForeignKey('Faculty', on_delete=models.PROTECT)
-    image = models.ImageField(upload_to='image', default=None)
+    image = models.FileField()
+
 
     def __str__(self):
         return '%s %s' % (self.candidate_name, self.faculty)
@@ -50,7 +51,7 @@ class Votings(models.Model):
     faculty = models.ForeignKey('Faculty', on_delete=models.PROTECT)
     finish = models.DateTimeField(default=timezone.now)
     name = models.CharField(max_length=200, default='')
-    parlament_image = models.ImageField(upload_to='image', default=None)
+    parlament_image = models.FileField()
 
     def __str__(self):
         return self.name
