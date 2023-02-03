@@ -127,10 +127,10 @@ def votetest(request: Request):
 @api_view(['PUT'])
 def votesolo(request: Request):
     data = request.data
-    candidate = Candidates.objects.get(candidate_name=data['candidate'])
+    user = CustomUser.objects.get(token=data['token'])
+    candidate = Candidates.objects.get(candidate_name=data['candidate'], faculty=user.faculty)
     vote = Votings.objects.get(
         faculty=candidate.faculty)
-    user = CustomUser.objects.get(token=data['token'])
     if check_time(vote.start, vote.finish):
         if user.is_voted != 1:  # is voted check
             user.is_voted = 1
