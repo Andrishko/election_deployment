@@ -72,7 +72,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   {% load static %}
   <script src="{% static 'js/voteSolo.js' %}" defer data-token="{{token}}"
-    data-candidate="{% for cand in candidates %}{{cand.candidate__name}}{% endfor %}" data-abstain="{{abstain}}">
+    data-candidate="{% for cand in candidates %}{{cand.candidate_name}}{% endfor %}" data-abstain="{{abstain}}">
     </script>
 
 </body>
