@@ -103,15 +103,16 @@ def test(request: Request, user_token):
 @api_view(['PUT'])
 def votetest(request: Request):
     data = request.data
+    candidate = Candidates.objects.get(candidate_name=data['candidate'])
     vote = Votings.objects.get(
-        faculty=Candidates.objects.get(id=data['candidate']).faculty)
+        faculty=candidate.faculty)
     user = CustomUser.objects.get(token=data['token'])
 
     if check_time(vote.start, vote.finish):
         if user.is_voted != 1:  # is voted check
             user.is_voted = 1
             user.save()
-            goals = Goals.objects.get(candidate_name=data['candidate'])
+            goals = Goals.objects.get(candidate_name=candidate.id)
             goals.candidate_goals = goals.candidate_goals + 1
             goals.save()
         html = render_to_string('thanks.html')
@@ -126,14 +127,15 @@ def votetest(request: Request):
 @api_view(['PUT'])
 def votesolo(request: Request):
     data = request.data
+    candidate = Candidates.objects.get(candidate_name=data['candidate'])
     vote = Votings.objects.get(
-        faculty=Candidates.objects.get(id=data['candidate']).faculty)
+        faculty=candidate.faculty)
     user = CustomUser.objects.get(token=data['token'])
     if check_time(vote.start, vote.finish):
         if user.is_voted != 1:  # is voted check
             user.is_voted = 1
             user.save()
-            goals = Goals.objects.get(candidate_name=data['candidate'])
+            goals = Goals.objects.get(candidate_name=candidate.id)
             print(data['vote'])
             if data['vote'] == 'yes':
                 goals.candidate_goals = goals.candidate_goals + 1

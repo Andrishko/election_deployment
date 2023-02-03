@@ -7,45 +7,46 @@ function displayRadioValue() {
     if (ele[i].type = "radio") {
 
       if (ele[i].checked) {
-        
-        $.ajax({
-          type: "PUT",
-          url: 'https://obscure-bastion-38165.herokuapp.com/votesolo/',
-          data: {
-          
-            "candidate": data.candidate,
-            "vote": ele[i].value,
-            "token": data.token
-          },
-          success: function (data) {
-            console.log(data);
-            $('#output').html(data);
+        if (confirm('Ви впевнені що хочете проголосувати за ' + data.candidate + '?')) {
+          $.ajax({
+            type: "PUT",
+            url: 'https://obscure-bastion-38165.herokuapp.com/votesolo/',
+            data: {
 
-          },
-          failure: function () {
-            alert("failure");
-          }
-        });
-        return true
+              "candidate": data.candidate,
+              "vote": ele[i].value,
+              "token": data.token
+            },
+            success: function (data) {
+              $('#output').html(data);
+
+            },
+            failure: function () {
+              alert("failure");
+            }
+          });
+          return true
+        }
       }
     }
   }
-  $.ajax({
-    type: "PUT",
-    url: 'https://obscure-bastion-38165.herokuapp.com/votetest/',
-    data: {
-      "candidate": data.abstain,
-      "token": data.token
-    },
-    success: function (data) {
-      console.log(data);
-      $('#output').html(data);
+  if (confirm('Ви впевнені що хочете утриматись від голосування?')) {
+    $.ajax({
+      type: "PUT",
+      url: 'https://obscure-bastion-38165.herokuapp.com/votetest/',
+      data: {
+        "candidate": data.abstain,
+        "token": data.token
+      },
+      success: function (data) {
+        $('#output').html(data);
 
-    },
-    failure: function () {
-      alert("failure");
-    }
-  });
+      },
+      failure: function () {
+        alert("failure");
+      }
+    });
+  }
 }
 
 var check1, check2;
