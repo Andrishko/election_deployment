@@ -27,6 +27,7 @@ function displayRadioValue() {
           });
           return true
         }
+        else return true
       }
     }
   }
@@ -47,6 +48,7 @@ function displayRadioValue() {
       }
     });
   }
+  else return true
 }
 
 var check1, check2;
