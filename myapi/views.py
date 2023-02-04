@@ -104,10 +104,8 @@ def test(request: Request, user_token):
 def votetest(request: Request):
     data = request.data
     user = CustomUser.objects.get(token=data['token'])
-    candidate = Candidates.objects.get(candidate_name=data['candidate'], faculty=user.faculty)
-    vote = Votings.objects.get(
-        faculty=candidate.faculty)
-
+    candidate = Candidates.objects.get(candidate_name=data['candidate'], faculty=Faculty.objects.get(faculty_name = user.faculty).id)
+    vote = Votings.objects.get(faculty=candidate.faculty)
     if check_time(vote.start, vote.finish):
         if user.is_voted != 1:  # is voted check
             user.is_voted = 1
@@ -128,9 +126,8 @@ def votetest(request: Request):
 def votesolo(request: Request):
     data = request.data
     user = CustomUser.objects.get(token=data['token'])
-    candidate = Candidates.objects.get(candidate_name=data['candidate'], faculty=user.faculty)
-    vote = Votings.objects.get(
-        faculty=candidate.faculty)
+    candidate = Candidates.objects.get(candidate_name=data['candidate'], faculty=Faculty.objects.get(faculty_name = user.faculty).id)
+    vote = Votings.objects.get(faculty=candidate.faculty)
     if check_time(vote.start, vote.finish):
         if user.is_voted != 1:  # is voted check
             user.is_voted = 1

@@ -12,7 +12,7 @@ function displayRadioValue() {
         if (confirm('Ви впевнені що хочете проголосувати за ' + ele[i].value + '?')) {
           $.ajax({
             type: "PUT",
-            url: 'https://obscure-bastion-38165.herokuapp.com/votetest/',
+            url: 'http://127.0.0.1:8000/votetest/',
             data: {
               "candidate": ele[i].value,
               "token": data.token
@@ -34,9 +34,9 @@ function displayRadioValue() {
   if (confirm('Ви впевнені що хочете утриматись від голосування?')) {
     $.ajax({
       type: "PUT",
-      url: 'https://obscure-bastion-38165.herokuapp.com/votetest/',
+      url: 'http://127.0.0.1:8000/votetest/',
       data: {
-        "candidate": data.abstain,
+        "candidate": "утримуюсь",
         "token": data.token
       },
       success: function (data) {
