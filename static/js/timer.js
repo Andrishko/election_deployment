@@ -4,7 +4,7 @@ const dat = document.currentScript.dataset;
 // Update the count down every 1 second
 var x = setInterval(function () {
 
-  countDownDate = Date.parse(dat.time) + 300000;
+  countDownDate = Date.parse(dat.time) + 30000;
   // Get today's date and time
   var now = new Date().getTime();
 

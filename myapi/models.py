@@ -31,8 +31,8 @@ class CustomUser(AbstractUser, PermissionsMixin):
     faculty = models.CharField(max_length=255)
     is_voted = models.BooleanField(default=False)
     token = models.CharField(max_length=1000, default='')
-    time = models.DateTimeField(
-        auto_now=False, auto_now_add=False, default='2002-09-16 00:00:00')
+    time = models.CharField(
+        default='2002-09-16 00:00:00', max_length=50)
 
     def __str__(self):
         return ""

@@ -95,8 +95,8 @@ def test(request: Request, user_token):
         return render(request, "youVoted.html", {"vote": vote})
     print(user.time)
     print('до перевірки')
-    if user.time.strftime("%Y-%m-%d %H:%M:%S") == '2002-09-15 21:00:00':
-        user.time = datetime.now()
+    if user.time == '2002-09-16 00:00:00':
+        user.time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         user.save()
         print(user.time)
         print('після перевірки')
@@ -114,7 +114,7 @@ def test(request: Request, user_token):
         "candidates": candidates,
         "token": user_token,
         "abstain": abstain.id,
-        "time": user.time.strftime("%Y-%m-%d %H:%M:%S%z")
+        "time": user.time
     }
 
     if len(candidates) != 1:
@@ -134,11 +134,11 @@ def votetest(request: Request):
     if not check_time(vote.start, vote.finish):
         return render(request, "votingExpired.html", {"vote": vote})
 
-    if not checkvote_time(user.time, timezone.now()):
+    print(user.time)
+    if not checkvote_time(datetime.strptime(user.time, '%Y-%m-%d %H:%M:%S'), datetime.now()):
         user.is_voted = 1
-        return render(request, "youVoted.html", {"vote": vote})
-    # те що нище треба в транзакцію засунути, щоб у випадку, якщо щось піде по пизді,
-    # голос чела не пропав, або чел не проголосував більше 1 раза
+        return render(request, "thanks.html", {"vote": vote})
+   
     try:
         if user.is_voted != 1:
             with transaction.atomic():
