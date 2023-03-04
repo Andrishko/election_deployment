@@ -44,14 +44,17 @@ def get_result(modeladmin, request, queryset):
             candidates = Candidates.objects.filter(faculty=v.faculty).values()
             print(candidates)
             cand_list = []
+            sum = 0
             for c in candidates:
                 print(c['candidate_name'])
-                result = Goals.objects.get(candidate_name=c['id']).candidate_goals
-                print(result)
-                cand_list.append({"candidate_name": c['candidate_name'], "result": result})
+                resultyes = Goals.objects.get(candidate_name=c['id']).candidate_goals
+                resultno = Goals.objects.get(candidate_name=c['id']).candidate_goalsno
+                sum += resultyes + resultno
+                cand_list.append({"candidate_name": c['candidate_name'], "resultyes": resultyes, "resultno":resultno})
             results_list.append({"voting": v.name, "candidates": cand_list})
     context = {
-        "result": results_list
+        "result": results_list,
+        "sum":sum
     }
     print(context)
     return render(request, 'results.html', context=context)
@@ -60,7 +63,6 @@ def get_result(modeladmin, request, queryset):
 def delete_voting(modeladmin, request, queryset):
     for v in queryset:
         if v.start > timezone.now():
-            print(v.faculty)
             Candidates.objects.filter(faculty=v.faculty).delete()
             v.delete()
 
@@ -81,6 +83,11 @@ class VotingsAdmin(admin.ModelAdmin):
                 del actions['delete_selected']
         return actions
 
+    def has_change_permission(self, request, obj= None):
+      if obj:
+        if check_time(obj.start, obj.finish):
+          return False
+      return True
     def has_delete_permission(self, request, obj=None):
         # Disable delete
         return False
@@ -90,6 +97,21 @@ class VotingsAdmin(admin.ModelAdmin):
 
 class CandidatesAdmin(admin.ModelAdmin):
     ordering = ('-faculty',)
+
+    def has_add_permission(self, request, obj=None):
+      if obj:
+        vote = Votings.objects.get(faculty=obj.faculty)
+        if check_time(vote.start, vote.finish):
+          return False
+      return True
+    
+    def has_change_permission(self, request, obj=None):
+      if obj:
+        vote = Votings.objects.get(faculty=obj.faculty)
+        if check_time(vote.start, vote.finish):
+          return False
+      return True
+
     def has_delete_permission(self, request, obj=None):
         # Disable delete
         return False

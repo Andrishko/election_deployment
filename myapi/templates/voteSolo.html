@@ -30,7 +30,9 @@
   <section class="main" id="output">
     <div class="wrapper">
       <div class="inner">
+        <div>Залишилось часу = <span id="timer"></span></div>
         <div class="votesolo">
+          
           {% for cand in candidates %}
           <img src="{{cand.image.url}}" alt="">
           <p class="candidate__name candidate__name-solo">
@@ -53,7 +55,7 @@
               <div class="radio">
                 <input class="radio-button" type="radio" name="candidate" id="no" value="no" onclick="radioClick(this)">
                 <span class="checkmark"></span>
-              </div> 
+              </div>
               <label for="no">
                 ПРОТИ
               </label>
@@ -74,6 +76,8 @@
   <script src="{% static 'js/voteSolo.js' %}" defer data-token="{{token}}"
     data-candidate="{% for cand in candidates %}{{cand.candidate_name}}{% endfor %}" data-abstain="{{abstain}}">
     </script>
+  <script src="{% static 'js/timer.js' %}" defer data-token="{{token}}" data-abstain="{{abstain}}"
+    data-time="{{time}}"></script>
 
 </body>
 

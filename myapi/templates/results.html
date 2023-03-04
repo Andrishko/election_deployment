@@ -16,11 +16,13 @@
     {%for c in r.candidates %} 
     <div>
       <p>{{c.candidate_name}}</p>
-      <p>{{c.result}}</p>
+      <p>За {{c.resultyes}}</p>
+      <p>Проти {{c.resultno}}</p>
     </div>
     {%endfor%}
   </div>
   {%endfor%}
+  <p>Кількість осіб що проголосували: {{sum}}</p>
 </body>
 
 </html>

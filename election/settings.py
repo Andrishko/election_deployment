@@ -105,7 +105,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "Europe/Kyiv"
+USE_TZ = True
+TIME_ZONE = "Europe/Kiev"
 
 USE_I18N = True
 
@@ -117,25 +118,25 @@ USE_TZ = True
 
 # The absolute path to the directory where collectstatic will collect static files for deployment.
 
-USE_S3 = "TRUE"
+USE_S3 = "FALSE"
 
-if USE_S3:
-    # aws settings
-    AWS_ACCESS_KEY_ID = "AKIAXBNPYQP5SWXQEZN3"
-    AWS_SECRET_ACCESS_KEY = "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"
-    AWS_STORAGE_BUCKET_NAME = "election-media"
-    AWS_DEFAULT_ACL = None
-    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
-    # s3 public media settings
-    PUBLIC_MEDIA_LOCATION = "media"
-    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
-    DEFAULT_FILE_STORAGE = "election.storage_backends.PublicMediaStorage"
-else:
-    MEDIA_URL = "/mediafiles/"
-    MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
+# if USE_S3:
+#     # aws settings
+#     AWS_ACCESS_KEY_ID = "AKIAXBNPYQP5SWXQEZN3"
+#     AWS_SECRET_ACCESS_KEY = "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"
+#     AWS_STORAGE_BUCKET_NAME = "election-media"
+#     AWS_DEFAULT_ACL = None
+#     AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+#     AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+#     # s3 public media settings
+#     PUBLIC_MEDIA_LOCATION = "media"
+#     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/"
+#     DEFAULT_FILE_STORAGE = "election.storage_backends.PublicMediaStorage"
+# else:
+#
 
-
+MEDIA_URL = "/mediafiles/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 STATIC_URL = "/staticfiles/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)

@@ -1,7 +1,7 @@
 import random
 import string
+from datetime import datetime, timedelta
 from datetime import datetime
-
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -12,33 +12,37 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.template.loader import render_to_string
 from django.http import HttpResponse
-
+from django.utils.timezone import localtime
 from .models import Goals, CustomUser, Votings, Faculty
 from .serializers import *
+from django.db import transaction
 
 
 def get_random_string(length):
-    result_str = ''.join(random.choice(string.ascii_letters)
+    result_str = "".join(random.choice(string.ascii_letters)
                          for i in range(length))
 
     return result_str
 
 
 def check_time(start, finish):
-    if start < timezone.now() < finish:
-        return True
-    else:
-        return False
+    return True if start < timezone.now() < finish else False
 
 
-@api_view(['POST'])
+def checkvote_time(log, vote):
+    return True if vote - log < timedelta(minutes=5) else False
+
+
+@api_view(["POST"])
 def gettokens(request: Request):
     tokens = []
     data = request.data
     i = 0
-    while i < int(data['number']):
+    # тут нада йобнуть bulk
+    while i < int(data["number"]):
         user = CustomUser.objects.create_user(
-            username=get_random_string(10), faculty=data['faculty'])
+            username=get_random_string(10), faculty=data["faculty"]
+        )
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
         tokens.append(access_token)
@@ -50,99 +54,146 @@ def gettokens(request: Request):
     return Response(tokens)
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def get_votings(request: Request):
     data = request.data
     active_votings = []
 
-    serializer_data = Votings.objects.filter(Q(faculty=Faculty.objects.get(faculty_name=data['faculty']).id) | Q(
-        faculty=Faculty.objects.get(faculty_name='spu').id))  # отримання списку голосувань
-    serializer = VotingsSerializer(instance=serializer_data, context={
-                                   'request': request}, many=True)
+    # отримання списку голосувань
+    serializer_data = Votings.objects.filter(
+        Q(faculty=Faculty.objects.get(faculty_name=data["faculty"]).id)
+        | Q(faculty=Faculty.objects.get(faculty_name="spu").id)
+    )
+    serializer = VotingsSerializer(
+        instance=serializer_data, context={"request": request}, many=True
+    )
+    # facultys = Faculty.objects.all
     for i in serializer.data:
-        if check_time(datetime.strptime(i['start'], '%Y-%m-%dT%H:%M:%S%z'),
-                      datetime.strptime(i['finish'], '%Y-%m-%dT%H:%M:%S%z')):
-            active_votings.append({"name": i['name'], "faculty": Faculty.objects.get(
-                id=i['faculty']).faculty_name})  # створення списку активних голосувань
+        start = datetime.strptime(i["start"], "%Y-%m-%dT%H:%M:%S%z")
+        finish = datetime.strptime(i["finish"], "%Y-%m-%dT%H:%M:%S%z")
+        if check_time(start, finish):
+            # створення списку активних голосувань
+            active_votings.append(
+                {
+                    "name": i["name"],
+                    "faculty": Faculty.objects.get(id=i["faculty"]).faculty_name,
+                }
+            )
     return Response(active_votings)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def test(request: Request, user_token):
-    user = CustomUser.objects.get(
-        token=user_token)
+    user = CustomUser.objects.get(token=user_token)
     vote = Votings.objects.get(
-        faculty=Faculty.objects.get(faculty_name=user.faculty).id)
+        faculty=Faculty.objects.get(faculty_name=user.faculty).id
+    )
+    if not check_time(vote.start, vote.finish):
+        return render(request, "votingExpired.html", {"vote": vote})
 
-    if check_time(vote.start, vote.finish):  # time check
-        if user.is_voted == 1:  # is voted check
-            return render(request, 'youVoted.html', {"vote": vote})
-        else:
-            candidates = Candidates.objects.filter(faculty=Faculty.objects.get(
-                faculty_name=user.faculty).id).exclude(candidate_name="утримуюсь")
-            abstain = Candidates.objects.get(faculty=Faculty.objects.get(
-                faculty_name=user.faculty).id, candidate_name="утримуюсь")
+    if user.is_voted == 1:
+        return render(request, "youVoted.html", {"vote": vote})
+    print(user.time)
+    print('до перевірки')
+    if user.time.strftime("%Y-%m-%d %H:%M:%S") == '2002-09-15 21:00:00':
+        user.time = datetime.now()
+        user.save()
+        print(user.time)
+        print('після перевірки')
 
-            context = {
-                "vote": vote,
-                "candidates": candidates,
-                "token": user_token,
-                "abstain": abstain.id,
-            }
-            print(len(candidates))
-            if len(candidates) != 1:
-              return render(request, 'vote.html', context=context)
-            else:
-              print(context['candidates'])
-              return render(request, 'voteSolo.html', context=context)
+    candidates = Candidates.objects.filter(
+        faculty=Faculty.objects.get(faculty_name=user.faculty).id
+    ).exclude(candidate_name="утримуюсь")
+    abstain = Candidates.objects.get(
+        faculty=Faculty.objects.get(faculty_name=user.faculty).id,
+        candidate_name="утримуюсь",
+    )
 
-    else:
-        return render(request, 'votingExpired.html', {"vote": vote})
+    context = {
+        "vote": vote,
+        "candidates": candidates,
+        "token": user_token,
+        "abstain": abstain.id,
+        "time": user.time.strftime("%Y-%m-%d %H:%M:%S%z")
+    }
+
+    if len(candidates) != 1:
+        return render(request, "vote.html", context=context)
+    return render(request, "voteSolo.html", context=context)
 
 
-@api_view(['PUT'])
+@api_view(["PUT"])
 def votetest(request: Request):
     data = request.data
-    user = CustomUser.objects.get(token=data['token'])
-    candidate = Candidates.objects.get(candidate_name=data['candidate'], faculty=Faculty.objects.get(faculty_name = user.faculty).id)
+    user = CustomUser.objects.get(token=data["token"])
+    candidate = Candidates.objects.get(
+        candidate_name=data["candidate"],
+        faculty=Faculty.objects.get(faculty_name=user.faculty).id,
+    )
     vote = Votings.objects.get(faculty=candidate.faculty)
-    if check_time(vote.start, vote.finish):
-        if user.is_voted != 1:  # is voted check
-            user.is_voted = 1
-            user.save()
-            goals = Goals.objects.get(candidate_name=candidate.id)
-            goals.candidate_goals = goals.candidate_goals + 1
-            goals.save()
-        html = render_to_string('thanks.html')
+    if not check_time(vote.start, vote.finish):
+        return render(request, "votingExpired.html", {"vote": vote})
+
+    if not checkvote_time(user.time, timezone.now()):
+        user.is_voted = 1
+        return render(request, "youVoted.html", {"vote": vote})
+    # те що нище треба в транзакцію засунути, щоб у випадку, якщо щось піде по пизді,
+    # голос чела не пропав, або чел не проголосував більше 1 раза
+    try:
+        if user.is_voted != 1:
+            with transaction.atomic():
+                user.is_voted = 1
+                user.save()
+                goals = Goals.objects.get(candidate_name=candidate.id)
+                goals.candidate_goals = goals.candidate_goals + 1
+                goals.save()
+                votingTime = VotingTime()
+                votingTime.candidate = candidate.candidate_name
+                votingTime.save()
+            html = render_to_string("thanks.html")
+            return HttpResponse(html)
+        else:
+            return render(request, "youVoted.html", {"vote": vote})
+
+    except:
+        html = render_to_string("wrong.html")
         return HttpResponse(html)
-    else:
-        data = {
-            "status": "false"
-        }
-        return JsonResponse(data)
 
 
-@api_view(['PUT'])
+@api_view(["PUT"])
 def votesolo(request: Request):
     data = request.data
-    user = CustomUser.objects.get(token=data['token'])
-    candidate = Candidates.objects.get(candidate_name=data['candidate'], faculty=Faculty.objects.get(faculty_name = user.faculty).id)
+    user = CustomUser.objects.get(token=data["token"])
+    candidate = Candidates.objects.get(
+        candidate_name=data["candidate"],
+        faculty=Faculty.objects.get(faculty_name=user.faculty).id,
+    )
     vote = Votings.objects.get(faculty=candidate.faculty)
-    if check_time(vote.start, vote.finish):
-        if user.is_voted != 1:  # is voted check
-            user.is_voted = 1
-            user.save()
-            goals = Goals.objects.get(candidate_name=candidate.id)
-            print(data['vote'])
-            if data['vote'] == 'yes':
-                goals.candidate_goals = goals.candidate_goals + 1
-            else:
-                goals.candidate_goalsno = goals.candidate_goalsno + 1
-            goals.save()
-        html = render_to_string('thanks.html')
+
+    if not check_time(vote.start, vote.finish):
+        return render(request, "votingExpired.html", {"vote": vote})
+
+    if not checkvote_time(user.time, timezone.now()):
+        user.is_voted = 1
+        return render(request, "youVoted.html", {"vote": vote})
+    # аналогічно коментарю вище, засунути в транзакцію потрібно все що нище
+    try:
+        if user.is_voted != 1:
+            with transaction.atomic():
+                user.is_voted = 1
+                user.save()
+                goals = Goals.objects.get(candidate_name=candidate.id)
+                votingTime = VotingTime()
+                votingTime.candidate = candidate.candidate_name
+                if data["vote"] == "yes":
+                    goals.candidate_goals = goals.candidate_goals + 1
+                else:
+                    goals.candidate_goalsno = goals.candidate_goalsno + 1
+                    votingTime.vote = '-1'
+                goals.save()
+                votingTime.save()
+                html = render_to_string("thanks.html")
+                return HttpResponse(html)
+    except:
+        html = render_to_string("wrong.html")
         return HttpResponse(html)
-    else:
-        data = {
-            "status": "false"
-        }
-        return JsonResponse(data)

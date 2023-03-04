@@ -29,6 +29,7 @@
   <section class="main" id="output">
     <div class="wrapper">
       <div class="inner">
+        <div>Залишилось часу = <span id="timer"></span></div>
         <ul class="candidate__list">
           {% for cand in candidates %}
           <li class="candidate__item">
@@ -55,8 +56,8 @@
   <script rel="javascript" type="text/javascript" href="js/jquery-1.11.3.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   {% load static %}
-  <script src="{% static 'js/vote.js' %}" defer data-token="{{token}}" data-abstain="{{abstain}}">
-  </script>
+  <script src="{% static 'js/vote.js' %}" defer data-token="{{token}}" data-abstain="{{abstain}}"></script>
+  <!-- <script src="{% static 'js/timer.js' %}" defer data-token="{{token}}" data-abstain="{{abstain}}" data-time="{{time}}"></script> -->
 
 </body>
 
