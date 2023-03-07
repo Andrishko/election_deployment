@@ -50,9 +50,9 @@ class Goals(models.Model):
 
 
 class Votings(models.Model):
-    start = models.DateTimeField(default=timezone.now)
+    start = models.DateTimeField(default=datetime.now())
     faculty = models.ForeignKey('Faculty', on_delete=models.PROTECT)
-    finish = models.DateTimeField(default=timezone.now)
+    finish = models.DateTimeField(default=datetime.now())
     name = models.CharField(max_length=200, default='')
     parlament_image = models.FileField()
 
@@ -60,10 +60,10 @@ class Votings(models.Model):
         return self.name
 
 
-class VotingTime(models.Model):
-    candidate = models.CharField(max_length=255)
-    vote = models.CharField(max_length=5, default='1')
-    time = models.DateTimeField(default=timezone.now)
+# class VotingTime(models.Model):
+#     candidate = models.CharField(max_length=255)
+#     vote = models.CharField(max_length=5, default='1')
+#     time = models.DateTimeField(default=timezone.now)
 
 
 @receiver(signals.post_save, sender=Votings)

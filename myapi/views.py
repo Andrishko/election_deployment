@@ -26,6 +26,8 @@ def get_random_string(length):
 
 
 def check_time(start, finish):
+    print(datetime.now())
+    print(timezone.now())
     return True if start < timezone.now() < finish else False
 
 
@@ -96,7 +98,7 @@ def test(request: Request, user_token):
     print(user.time)
     print('до перевірки')
     if user.time == '2002-09-16 00:00:00':
-        user.time = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
+        user.time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         user.save()
         print(user.time)
         print('після перевірки')
@@ -135,7 +137,7 @@ def votetest(request: Request):
         return render(request, "votingExpired.html", {"vote": vote})
 
     print(user.time)
-    if not checkvote_time(timezone.strptime(user.time, '%Y-%m-%d %H:%M:%S'), timezone.now()):
+    if not checkvote_time(datetime.strptime(user.time, '%Y-%m-%d %H:%M:%S'), datetime.now()):
         user.is_voted = 1
         return render(request, "thanks.html", {"vote": vote})
    
@@ -173,7 +175,7 @@ def votesolo(request: Request):
     if not check_time(vote.start, vote.finish):
         return render(request, "votingExpired.html", {"vote": vote})
 
-    if not checkvote_time(user.time, timezone.now()):
+    if not checkvote_time(datetime.strptime(user.time, '%Y-%m-%d %H:%M:%S'), datetime.now()):
         user.is_voted = 1
         return render(request, "youVoted.html", {"vote": vote})
     # аналогічно коментарю вище, засунути в транзакцію потрібно все що нище
