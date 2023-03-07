@@ -60,10 +60,10 @@ class Votings(models.Model):
         return self.name
 
 
-# class VotingTime(models.Model):
-#     candidate = models.CharField(max_length=255)
-#     vote = models.CharField(max_length=5, default='1')
-#     time = models.DateTimeField(default=timezone.now)
+class VotingTime(models.Model):
+    candidate = models.CharField(max_length=255)
+    vote = models.CharField(max_length=5, default='1')
+    time = models.DateTimeField(default=timezone.now)
 
 
 @receiver(signals.post_save, sender=Votings)
